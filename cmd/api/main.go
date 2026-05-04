@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/pratikdev/url-shortner-api/internal/database"
+	"github.com/pratikdev/url-shortener-api/internal/database"
 )
 
 func main() {
