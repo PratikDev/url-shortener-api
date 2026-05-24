@@ -2,6 +2,7 @@ package utils
 
 import (
 	"math/rand/v2"
+	"os"
 	"strings"
 )
 
@@ -23,4 +24,8 @@ func GenerateShortCode(length ...int) string {
 	}
 
 	return sb.String()
+}
+
+func ConstructShortURL(shortCode string) string {
+	return os.Getenv("BASE_URL") + "/" + shortCode
 }
