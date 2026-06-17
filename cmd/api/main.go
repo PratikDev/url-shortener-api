@@ -25,6 +25,9 @@ func main() {
     http.HandleFunc("POST /urls", func(w http.ResponseWriter, r *http.Request) {
         handlers.CreateURL(w, r, pool, validate)
     })
+    http.HandleFunc("GET /urls/{shortCode}", func(w http.ResponseWriter, r *http.Request) {
+        handlers.GetURL(w, r, pool, validate)
+    })
 
     http.ListenAndServe(":" + os.Getenv("API_PORT"), nil)
 }

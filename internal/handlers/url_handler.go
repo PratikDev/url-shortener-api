@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -53,4 +54,32 @@ func CreateURL(w http.ResponseWriter, r *http.Request, pool *pgxpool.Pool, valid
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonData)
+}
+
+func GetURL(w http.ResponseWriter, r *http.Request, pool *pgxpool.Pool, validate *validator.Validate) {
+	request_body := models.GetURLRequest{
+		ShortCode: r.PathValue("shortCode"),
+	}
+
+	// validate the request body
+	err := validate.Struct(request_body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// get the url
+	record, err := database.GetURLFromShortCode(pool, request_body.ShortCode)
+	if err != nil {
+		// if no row err
+		if errors.Is(err, database.ErrShortCodeNotFound) {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, record.OriginalURL, http.StatusFound)
 }
