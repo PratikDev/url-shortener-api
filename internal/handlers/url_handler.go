@@ -12,6 +12,11 @@ import (
 	"github.com/pratikdev/url-shortener-api/internal/utils"
 )
 
+func GetHealth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(`{"status":"ok"}`))
+}
+
 func CreateURL(w http.ResponseWriter, r *http.Request, pool *pgxpool.Pool, validate *validator.Validate) {
 	var url_request_body models.CreateURLRequest
 

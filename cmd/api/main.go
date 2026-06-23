@@ -15,19 +15,19 @@ func main() {
     logger := slog.New(handler)
 	pool := database.InitDB(logger)
     validate := validator.New()
+    mux := http.NewServeMux()
 
     defer pool.Close() // Close the database connection pool when the application exits
 
-    http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        w.Write([]byte(`{"status":"ok"}`))
+    mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+        handlers.GetHealth(w, r)
     })
-    http.HandleFunc("POST /urls", func(w http.ResponseWriter, r *http.Request) {
+    mux.HandleFunc("POST /urls", func(w http.ResponseWriter, r *http.Request) {
         handlers.CreateURL(w, r, pool, validate)
     })
-    http.HandleFunc("GET /urls/{shortCode}", func(w http.ResponseWriter, r *http.Request) {
+    mux.HandleFunc("GET /urls/{shortCode}", func(w http.ResponseWriter, r *http.Request) {
         handlers.GetURL(w, r, pool, validate)
     })
 
-    http.ListenAndServe(":" + os.Getenv("API_PORT"), nil)
+    http.ListenAndServe(":" + os.Getenv("API_PORT"), mux)
 }
