@@ -27,5 +27,5 @@ func GenerateShortCode(length ...int) string {
 }
 
 func ConstructShortURL(shortCode string) string {
-	return os.Getenv("BASE_URL") + "/" + shortCode
+	return os.Getenv("BASE_URL") + "/urls/" + shortCode
 }
