@@ -30,5 +30,8 @@ func main() {
         handlers.GetURL(w, r, pool, validate)
     })
 
-    http.ListenAndServe(":" + os.Getenv("API_PORT"), middleware.RateLimitMiddleware(mux))
+    http.ListenAndServe(":" + os.Getenv("API_PORT"), middleware.LoggingMiddleware(
+        middleware.RateLimitMiddleware(mux),
+        logger,
+    ))
 }

@@ -11,7 +11,7 @@ import (
 var MAX_TOKENS = float64(100)
 var REFILL_RATE_PER_SECOND = float64(5) // per second
 
-func RateLimitMiddleware (next http.Handler) http.Handler {
+func RateLimitMiddleware(next http.Handler) http.Handler {
 	safemap := utils.NewSafeMap[models.TokenBucket]()
 	
 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {

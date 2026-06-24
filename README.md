@@ -138,7 +138,6 @@ make db
 
 ## What's Next
 
-- Structured request logging middleware (method, path, status, duration, client IP)
 - Integration tests using `httptest`
 - Deploy to a live environment (AWS/Render) for a working demo link
 - Optional: migrate rate limiter state to Redis with TTL-based eviction
