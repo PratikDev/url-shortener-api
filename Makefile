@@ -36,6 +36,9 @@ up:
 down:
 	sudo docker compose down
 
+db:
+	sudo docker exec -it $(POSTGRES_HOST) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
+
 clean:
 	sudo docker compose down --remove-orphans -v
 
