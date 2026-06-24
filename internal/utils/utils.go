@@ -2,6 +2,8 @@ package utils
 
 import (
 	"math/rand/v2"
+	"net"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -28,4 +30,35 @@ func GenerateShortCode(length ...int) string {
 
 func ConstructShortURL(shortCode string) string {
 	return os.Getenv("BASE_URL") + "/urls/" + shortCode
+}
+
+// GetClientIP extracts the user's real IP address from the request.
+func GetClientIP(r *http.Request) string {
+	// 1. Check standard proxy headers
+	headers := []string{"X-Forwarded-For", "X-Real-IP"}
+	for _, header := range headers {
+		addresses := r.Header.Get(header)
+		if addresses != "" {
+			// X-Forwarded-For can contain a comma-separated list of IPs.
+			// The first IP is usually the original client.
+			for ip := range strings.SplitSeq(addresses, ",") {
+				ip = strings.TrimSpace(ip)
+				// Handle potential IPv6 formatting wrapped in brackets
+				if strings.HasPrefix(ip, "[") && strings.HasSuffix(ip, "]") {
+					ip = ip[1 : len(ip)-1]
+				}
+				if net.ParseIP(ip) != nil {
+					return ip
+				}
+			}
+		}
+	}
+
+	// 2. Fallback to RemoteAddr (Format is always "IP:port" or "[IPv6]:port")
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		// If SplitHostPort fails (e.g. no port present), return RemoteAddr as-is
+		return r.RemoteAddr
+	}
+	return ip
 }
