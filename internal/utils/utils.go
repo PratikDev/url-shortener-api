@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -30,6 +31,10 @@ func GenerateShortCode(length ...int) string {
 
 func ConstructShortURL(shortCode string) string {
 	return os.Getenv("BASE_URL") + "/urls/" + shortCode
+}
+
+func FloatToString(val float64) string {
+	return strconv.FormatFloat(val, 'f', -1, 64)
 }
 
 // GetClientIP extracts the user's real IP address from the request.

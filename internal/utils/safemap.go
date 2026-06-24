@@ -27,3 +27,14 @@ func (m *SafeMap[T]) Get(key string) (T, bool) {
 	val, exists := m.data[key]
 	return val, exists
 }
+
+func (m *SafeMap[T]) Update(key string, updater func(current T, exists bool) T) T {
+    m.mu.Lock()
+    defer m.mu.Unlock()
+
+    current, exists := m.data[key]
+    newValue := updater(current, exists)
+    m.data[key] = newValue
+
+    return newValue
+}
