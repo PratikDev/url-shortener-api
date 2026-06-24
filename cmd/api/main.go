@@ -8,6 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/pratikdev/url-shortener-api/internal/database"
 	"github.com/pratikdev/url-shortener-api/internal/handlers"
+	"github.com/pratikdev/url-shortener-api/internal/middleware"
 )
 
 func main() {
@@ -29,5 +30,5 @@ func main() {
         handlers.GetURL(w, r, pool, validate)
     })
 
-    http.ListenAndServe(":" + os.Getenv("API_PORT"), mux)
+    http.ListenAndServe(":" + os.Getenv("API_PORT"), middleware.RateLimitMiddleware(mux))
 }

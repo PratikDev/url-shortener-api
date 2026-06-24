@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type URLRecord struct {
 	ShortCode string `json:"short_code" db:"short_code"`
 	OriginalURL string `json:"original_url" db:"url"`
@@ -17,4 +19,9 @@ type CreateURLResponse struct {
 
 type GetURLRequest struct {
 	ShortCode string `json:"short_code" validate:"required,alphanum"`
+}
+
+type TokenBucket struct {
+	Tokens float64
+	LastRefill time.Time
 }
