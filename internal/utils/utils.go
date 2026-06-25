@@ -9,11 +9,12 @@ import (
 	"strings"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const SHORT_CODE_DEFAULT_LENGTH = 10
 
 func GenerateShortCode(length ...int) string {
 	// Set default value
-	n := 10
+	n := SHORT_CODE_DEFAULT_LENGTH
 	if len(length) > 0 {
 		n = length[0]
 	}
@@ -23,7 +24,7 @@ func GenerateShortCode(length ...int) string {
 
 	for i := 0; i < n; i++ {
 		// rand.IntN is faster and safer in Go 1.22+
-		sb.WriteByte(charset[rand.IntN(len(charset))])
+		sb.WriteByte(CHARSET[rand.IntN(len(CHARSET))])
 	}
 
 	return sb.String()
@@ -37,7 +38,6 @@ func FloatToString(val float64) string {
 	return strconv.FormatFloat(val, 'f', -1, 64)
 }
 
-// GetClientIP extracts the user's real IP address from the request.
 func GetClientIP(r *http.Request) string {
 	// 1. Check standard proxy headers
 	headers := []string{"X-Forwarded-For", "X-Real-IP"}
