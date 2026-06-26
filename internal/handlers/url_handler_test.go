@@ -87,3 +87,62 @@ func TestCreateURL(t *testing.T) {
 		}
 	})
 }
+
+func TestGetURL(t *testing.T) {
+	// truncate the table first
+	testutils.TruncateURLsTable(testPool)
+
+	// configure request and recorder
+	r := func (shortCode string) *http.Request {
+		req := httptest.NewRequest(http.MethodGet, "/urls/" + shortCode, nil)	
+		req.SetPathValue("shortCode", shortCode)
+		return req
+	}
+
+	// ping with invaild shortcode
+	w := httptest.NewRecorder()
+	GetURL(w, r("eo-323##0"), testPool, testValidator)
+	t.Run("invalid short-code status check", func(t *testing.T) {
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("wrong status code. expected: %d, got: %d", http.StatusBadRequest, w.Code)
+		}
+	})
+
+	// ping with vaild non-existing shortcode
+	w = httptest.NewRecorder()
+	GetURL(w, r("abcd"), testPool, testValidator)
+	t.Run("valid non-existing short-code status check", func(t *testing.T) {
+		if w.Code != http.StatusNotFound {
+			t.Errorf("wrong status code. expected: %d, got: %d", http.StatusNotFound, w.Code)
+		}
+	})
+
+	// insert a url first
+	url := "https://example.com"
+	record, err := database.InsertNewURL(testPool, url)
+	if err != nil {
+		t.Errorf("failed inserting url into database")
+		return
+	}
+
+	// ping with vaild existing shortcode
+	w = httptest.NewRecorder()
+	GetURL(w, r(record.ShortCode), testPool, testValidator)
+	t.Run("valid existing short-code status check", func(t *testing.T) {
+		if w.Code != http.StatusFound {
+			t.Errorf("wrong status code. expected: %d, got: %d", http.StatusFound, w.Code)
+		}
+	})
+
+	t.Run("redirect location check", func(t *testing.T) {
+		location, err := w.Result().Location()
+		if err != nil {
+			t.Errorf("failed extracting response location: %v", err)
+			return
+		}
+
+		if location.String() != url {
+			t.Errorf("wrong redirect location. expected: %s, got: %s", url, location.String())
+		}
+	})
+}
