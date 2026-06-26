@@ -29,7 +29,7 @@ func InitDB(logger *slog.Logger) *pgxpool.Pool {
 		os.Exit(1)
 	}
 
-	logger.Info("Successfully connected to the database.", "database", DATABASE_URL)
+	logger.Info("Successfully connected to the database.")
 
 	return dbpool
 }
