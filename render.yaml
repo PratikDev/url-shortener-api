@@ -1,34 +1,32 @@
-services:
-  # The App container mapped as a Web Service
-  - type: web
-    name: url-shortener-api
-    env: docker # Tells Render to build using your local Dockerfile
-    plan: free # Change to 'starter' or higher for production workloads
-    region: oregon # Choose your closest region (oregon, frankfurt, ohio, singapore)
-    envVars:
-      - key: PORT
-        sync: false # Render automatically injects a PORT variable for the web service
-      # Inject your database environment variables dynamically
-      - key: POSTGRES_USER
-        fromDatabase:
-          name: url-shortener-db
-          property: user
+# Exported from Render on 2026-06-26T12:26:19Z
+version: "1"
+projects:
+- name: url-shortner-api
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: url-shortener-api
+      runtime: docker
+      repo: https://github.com/PratikDev/url-shortener-api
+      plan: free
+      envVars:
       - key: POSTGRES_PASSWORD
-        fromDatabase:
-          name: url-shortener-db
-          property: password
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
       - key: POSTGRES_DB
-        fromDatabase:
-          name: url-shortener-db
-          property: database
-      # Render provides an internal connection string for communication between services
-      - key: DATABASE_URL 
-        fromDatabase:
-          name: url-shortener-db
-          property: connectionString
-
-# The Postgres container mapped as a managed Render Database (replaces your postgres service and volumes)
-databases:
-  - name: url-shortener-db
-    plan: free # Change to standard plans if you need persistent storage beyond 90 days on free tiers
-    region: oregon
+        sync: false
+      - key: PORT
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: POSTGRES_PORT
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      region: oregon
+      healthCheckPath: /health
+      dockerContext: .
+      dockerfilePath: ./Dockerfile
+      autoDeployTrigger: commit

@@ -20,6 +20,15 @@ migrate-up:
 	-verbose \
 	up
 
+migrate-up-render:
+	sudo docker run --rm \
+  -v $(pwd)/migrations:/migrations \
+  migrate/migrate \
+  -source file:///migrations \
+  -database $(RENDER_EXTERNAL_DATABASE_URL) \
+  -verbose \
+  up
+
 migrate-down:
 	sudo docker run --rm \
 	--network url-shortener-api_default \
