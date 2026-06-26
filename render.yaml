@@ -1,0 +1,34 @@
+services:
+  # The App container mapped as a Web Service
+  - type: web
+    name: url-shortener-api
+    env: docker # Tells Render to build using your local Dockerfile
+    plan: free # Change to 'starter' or higher for production workloads
+    region: oregon # Choose your closest region (oregon, frankfurt, ohio, singapore)
+    envVars:
+      - key: PORT
+        sync: false # Render automatically injects a PORT variable for the web service
+      # Inject your database environment variables dynamically
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: url-shortener-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: url-shortener-db
+          property: password
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: url-shortener-db
+          property: database
+      # Render provides an internal connection string for communication between services
+      - key: DATABASE_URL 
+        fromDatabase:
+          name: url-shortener-db
+          property: connectionString
+
+# The Postgres container mapped as a managed Render Database (replaces your postgres service and volumes)
+databases:
+  - name: url-shortener-db
+    plan: free # Change to standard plans if you need persistent storage beyond 90 days on free tiers
+    region: oregon
