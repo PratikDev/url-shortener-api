@@ -30,6 +30,9 @@ func InsertNewURL(pool *pgxpool.Pool, Url string) (models.URLRecord, error) {
 		if err != nil {
 			// if duplicate short code
 			if err, ok := err.(*pgconn.PgError); ok && err.Code == pgerrcode.UniqueViolation {
+				/* Critical: i forgot to close the conn before continuing with the loop.
+				noticed after weeks while working on another project with similar pattern */
+				rows.Close()
 				continue
 			}
 
