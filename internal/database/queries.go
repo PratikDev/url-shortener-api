@@ -37,6 +37,7 @@ func InsertNewURL(pool *pgxpool.Pool, Url string) (models.URLRecord, error) {
 			}
 
 			// any other error
+			rows.Close()
 			return models.URLRecord{}, err
 		}
 		
@@ -54,6 +55,7 @@ func GetURLFromShortCode(pool *pgxpool.Pool, Short_Code string) (models.URLRecor
 	}
 	rows, err := pool.Query(context.Background(), query, args)
 	if err != nil {
+		rows.Close()
 		return models.URLRecord{}, err
 	}
 
